@@ -1,0 +1,1 @@
+My solution to exercises from [part1a](https://fullstackopen.com/en/part1) of [Fullstackopen course](https://fullstackopen.com/en/)
