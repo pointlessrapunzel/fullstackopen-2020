@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
-const Anecdote = ({ selected, votes }) => {
+const Anecdote = ({ text, votes }) => {
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
+      <p>{text}</p>
       <p>has {votes} votes</p>
     </div>
   )
@@ -21,6 +21,10 @@ const App = () => {
   const [ selected, setSelected ] = useState(0)
   const [ votes, setVotes ] = useState(anecdotes.map(a => 0))
 
+  let maxVoted = votes.reduce((max, cur, i) => {
+    return votes[max] >= votes[i] ? max : i
+  }, 0)
+
   const pickRandomAnecdote = () => {
     setSelected(Math.floor(Math.random() * anecdotes.length))
   }
@@ -31,7 +35,8 @@ const App = () => {
 
   return (
     <div className="App">
-      <Anecdote selected={selected} votes={votes[selected]} />
+      <h2>Anecdote of the day</h2>
+      <Anecdote text={anecdotes[selected]} votes={votes[selected]} />
       <Button 
         handleClick={handleUpvote} 
         text={'vote'} 
@@ -39,6 +44,11 @@ const App = () => {
       <Button 
         handleClick={pickRandomAnecdote} 
         text={'next anecdote'} 
+       />
+       <h2>Anecdote with most votes</h2>
+       <Anecdote 
+        text={anecdotes[maxVoted]} 
+        votes={votes[maxVoted]}
        />
     </div>
   );
