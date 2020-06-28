@@ -12,11 +12,15 @@ const Stat = ({ value, text }) => {
   )
 }
 
-const Stats = ({ stats }) => {
+const Statistics = ({ stats }) => {
+  if (stats.all === 0) {
+    return ( <p>No feedback given</p>)
+  }
+  
   return (
     <ul style={{'listStyle': 'none', 'padding': 0}}>
-      {stats.map((stat, i) => 
-        <Stat key={i} value={stat.value} text={stat.text} /> 
+      {Object.entries(stats).map((stat, i) => 
+        <Stat key={i} value={stat[1]} text={stat[0]} /> 
       )}
     </ul>
   )
@@ -28,34 +32,16 @@ const App = () => {
   const [ bad, setBad ] = useState(0)
   let all = good + neutral + bad
   let avg = (good - bad) / all || 0
-  let positive = (good / all) * 100 || 0
+  let positive = ((good / all) * 100 || 0) + '%'
 
-  const stats = [ 
-  {
-    text: 'good',
-    value: good
-  }, 
-  {
-    text: 'neutral',
-    value: neutral
-  },
-  {
-    text: 'bad',
-    value: bad
-  },
-  {
-    text: 'all',
-    value: all
-  },
-  {
-    text: 'average',
-    value: avg
-  },
-  {
-    text: 'positive',
-    value: positive + '%'
+  const stats = {
+    good: good,
+    neutral: neutral,
+    bad: bad,
+    all: all,
+    avg: avg,
+    positive: positive
   }
-  ]
 
   return (
     <div className="App">
@@ -64,7 +50,7 @@ const App = () => {
       <Button handleClick={() => setNeutral(neutral + 1)} text='neutral' />
       <Button handleClick={() => setBad(bad + 1)} text='bad' />
       <h2>statistics</h2>
-      <Stats stats={stats} />
+      <Statistics stats={stats} />
     </div>
   );
 }
