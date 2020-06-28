@@ -8,7 +8,10 @@ const Button = ({ handleClick, text }) => {
 
 const Stat = ({ value, text }) => {
   return (
-    <li>{text} {value}</li>
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
   )
 }
 
@@ -18,11 +21,13 @@ const Statistics = ({ stats }) => {
   }
   
   return (
-    <ul style={{'listStyle': 'none', 'padding': 0}}>
+    <table>
+      <tbody>
       {Object.entries(stats).map((stat, i) => 
         <Stat key={i} value={stat[1]} text={stat[0]} /> 
       )}
-    </ul>
+      </tbody>
+    </table>
   )
 }
 
