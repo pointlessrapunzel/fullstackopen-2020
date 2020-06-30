@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
+import Input from './components/Input'
+import PersonForm from "./components/PersonForm";
 
-const Input = ({label, value, onChange}) => {
-  return (
-    <div>
-      {label}
-      <input 
-        value={value} 
-        onChange={onChange} 
-      />
-    </div>
-  )
-}
-
-const NumbersList = ({persons}) => {
+const Persons = ({persons}) => {
+  if (persons.length === 0) {
+    return <p>Nothing found...</p>
+  }
   return (
     <ul style={{'listStyle': 'none'}}>
       {persons.map(p => <li key={p.name}>{p.name} {p.number}</li>)}
@@ -61,15 +54,15 @@ const App = () => {
       <h2>Phonebook</h2>
       <Input label='filter shown with' value={filter} onChange={handleFilterChange}/>
       <h2>add a new</h2>
-      <form onSubmit={handleAddPerson}>
-        <Input label='name:' value={newName} onChange={handleNewNameChange} />
-        <Input label='number:' value={newNumber} onChange={handleNewNumberChange} />
-        <div>
-          <button type='submit'>add</button>
-        </div>
-      </form>
+      <PersonForm 
+        onSubmit={handleAddPerson} 
+        fields={[
+          {label: 'name:', value: newName, onChange: handleNewNameChange},
+          {label: 'number:', value: newNumber, onChange: handleNewNumberChange},
+        ]} 
+      />
       <h2>Numbers</h2>
-      <NumbersList persons={filteredPersons} />
+      <Persons persons={filteredPersons} />
     </div>
   );
 }
