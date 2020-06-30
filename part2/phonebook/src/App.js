@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 const Input = ({label, value, onChange}) => {
   return (
     <div>
-      {label}: 
+      {label}
       <input 
         value={value} 
         onChange={onChange} 
@@ -22,10 +22,14 @@ const NumbersList = ({persons}) => {
 
 const App = () => {
   const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas', number: '991' }
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
   ])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
+  const [ filter, setFilter ] = useState('')
 
   const handleAddPerson = e => {
     e.preventDefault()
@@ -42,26 +46,30 @@ const App = () => {
     setNewNumber('')
   }
 
-  const handleNewNameChange = e => {
-    setNewName(e.target.value)
-  }
+  const handleInput = setter => e => setter(e.target.value)
 
-  const handleNewNumberChange = e => {
-    setNewNumber(e.target.value)
-  }
+  const handleNewNameChange = handleInput(setNewName)
+  const handleNewNumberChange = handleInput(setNewNumber)
+  const handleFilterChange = handleInput(setFilter)
+
+  const filteredPersons = persons.filter(p => {
+    return p.name.toLowerCase().includes(filter.toLowerCase())
+  })
 
   return (
     <div className="App">
       <h2>Phonebook</h2>
+      <Input label='filter shown with' value={filter} onChange={handleFilterChange}/>
+      <h2>add a new</h2>
       <form onSubmit={handleAddPerson}>
-        <Input label='name' value={newName} onChange={handleNewNameChange} />
-        <Input label='number' value={newNumber} onChange={handleNewNumberChange} />
+        <Input label='name:' value={newName} onChange={handleNewNameChange} />
+        <Input label='number:' value={newNumber} onChange={handleNewNumberChange} />
         <div>
           <button type='submit'>add</button>
         </div>
       </form>
       <h2>Numbers</h2>
-      <NumbersList persons={persons} />
+      <NumbersList persons={filteredPersons} />
     </div>
   );
 }
