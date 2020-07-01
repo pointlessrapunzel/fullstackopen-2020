@@ -5,30 +5,50 @@ const CountriesList = ({ countries }) => {
   if (countries.length === 1) {
     const country = countries[0]
     return (
-      <div>
-        <h2>{country.name}</h2>
-        <div>
-          capital {country.capital}
-          <br />
-          population {country.population}
-        </div>
-        <h3>languages</h3>
-        <ul>
-          {country.languages.map(lang => (
-            <li key={lang.iso639_1}>{lang.name}</li>
-          ))}
-        </ul>
-        <img style={{'maxWidth': '100px'}} src={country.flag} />
-      </div>
+      <Country country={country} isShown={true} />
     )
   } else if (countries.length <= 10) {
     return (
       <ul style={{'listStyle': 'none', 'padding': '0'}}>
-        {countries.map(c => <li key={c.alpha3Code}>{c.name}</li>)}
+        {countries.map(c => 
+          <Country key={c.alpha3Code} country={c}/>
+        )}
       </ul>
     )
   }
   return <p>Too many matches, specify another field</p>
+}
+
+const Country = ({ country, isShown = false }) => {
+  const [shown, setShown] = useState(isShown)
+  const handleShown = () => setShown(!shown)
+
+  if (!shown) return (
+    <div>
+      {country.name} <button onClick={handleShown}>show</button>
+    </div>
+  )
+
+  return (
+    <div style={{'margin': '30px 0'}}>
+      <div>
+        <h2 style={{'display': 'inline'}}>{country.name}</h2>
+        <button onClick={handleShown}>hide</button>
+      </div>
+      <div>
+        capital {country.capital}
+        <br />
+        population {country.population}
+      </div>
+      <h3>languages</h3>
+      <ul>
+        {country.languages.map(lang => (
+          <li key={lang.iso639_1}>{lang.name}</li>
+        ))}
+      </ul>
+      <img style={{'maxWidth': '100px'}} src={country.flag} />
+    </div>
+  )
 }
 
 const App = () => {
