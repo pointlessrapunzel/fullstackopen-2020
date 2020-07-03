@@ -22,7 +22,7 @@ const Person = ({ p, deleteHandler }) => {
   return (
     <li>
       {p.name} {p.number} 
-      <button onClick={() => deleteHandler(p.id)}>delete</button>
+      <button onClick={() => deleteHandler(p)}>delete</button>
     </li>
   )
 }
@@ -36,19 +36,20 @@ const App = () => {
   useEffect(() => {
     personsService.getAll()
       .then(response => {
-        console.log(response)
         setPersons(response)
       })
   }, [])
 
   const handleAddPerson = e => {
     e.preventDefault()
-    if (persons.map(p => p.name).includes(newName)) {
-      alert(`${newName} is already added to phonebook`)
+    
+    const newPerson = {name: newName, number: newNumber}
+    const duplicate = persons.find(p => p.name === newPerson.name)
+
+    if (duplicate) {
+      updatePerson(duplicate, newPerson)
       return
     }
-
-    const newPerson = {name: newName, number: newNumber}
 
     personsService.create(newPerson)
       .then(response => {
@@ -58,10 +59,24 @@ const App = () => {
       })
   }
 
-  const handleDeletePerson = id => {
-    personsService.remove(id)
+  const updatePerson = (oldPerson, newPerson) => {
+    if (!window.confirm(`${newPerson.name} is already added to phonebook, replace the old number with a new one?`)) return
+
+    personsService.update(oldPerson.id, newPerson)
       .then(response => {
-        setPersons(persons.filter(p => p.id !== id))
+        setPersons(
+          persons.map(p => p.id === oldPerson.id ? response : p)
+        )
+        setNewName('')
+        setNewNumber('')
+      })
+  }
+
+  const handleDeletePerson = person => {
+    if (!window.confirm(`Delete ${person.name}?`)) return
+    personsService.remove(person.id)
+      .then(response => {
+        setPersons(persons.filter(p => p.id !== person.id))
       })
   }
 
