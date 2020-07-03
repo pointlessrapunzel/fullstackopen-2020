@@ -1,17 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'
+
+import personsService from "./services/persons";
 
 import Input from './components/Input'
 import PersonForm from "./components/PersonForm";
 
-const Persons = ({persons}) => {
+const Persons = ({persons, deleteHandler}) => {
   if (persons.length === 0) {
     return <p>Nothing found...</p>
   }
   return (
     <ul style={{'listStyle': 'none'}}>
-      {persons.map(p => <li key={p.name}>{p.name} {p.number}</li>)}
+      {persons.map(p => 
+        <Person key={p.id} deleteHandler={deleteHandler} p={p} />
+      )}
     </ul>
+  )
+}
+
+const Person = ({ p, deleteHandler }) => {
+  return (
+    <li>
+      {p.name} {p.number} 
+      <button onClick={() => deleteHandler(p.id)}>delete</button>
+    </li>
   )
 }
 
@@ -22,10 +34,10 @@ const App = () => {
   const [ filter, setFilter ] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
+    personsService.getAll()
       .then(response => {
-        setPersons(response.data)
+        console.log(response)
+        setPersons(response)
       })
   }, [])
 
@@ -36,11 +48,21 @@ const App = () => {
       return
     }
 
-    setPersons(persons.concat(
-      { name: newName, number: newNumber }
-    ))
-    setNewName('')
-    setNewNumber('')
+    const newPerson = {name: newName, number: newNumber}
+
+    personsService.create(newPerson)
+      .then(response => {
+        setPersons(persons.concat(response))
+        setNewName('')
+        setNewNumber('')
+      })
+  }
+
+  const handleDeletePerson = id => {
+    personsService.remove(id)
+      .then(response => {
+        setPersons(persons.filter(p => p.id !== id))
+      })
   }
 
   const handleInput = setter => e => setter(e.target.value)
@@ -66,7 +88,10 @@ const App = () => {
         ]} 
       />
       <h2>Numbers</h2>
-      <Persons persons={filteredPersons} />
+      <Persons 
+        persons={filteredPersons} 
+        deleteHandler={handleDeletePerson} 
+      />
     </div>
   );
 }
