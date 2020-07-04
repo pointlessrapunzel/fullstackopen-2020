@@ -3,35 +3,23 @@ import React, { useState, useEffect } from 'react';
 import personsService from "./services/persons";
 
 import Input from './components/Input'
+import Persons from "./components/Persons";
 import PersonForm from "./components/PersonForm";
+import Notification from "./components/Notification";
 
-const Persons = ({persons, deleteHandler}) => {
-  if (persons.length === 0) {
-    return <p>Nothing found...</p>
-  }
-  return (
-    <ul style={{'listStyle': 'none'}}>
-      {persons.map(p => 
-        <Person key={p.id} deleteHandler={deleteHandler} p={p} />
-      )}
-    </ul>
-  )
-}
-
-const Person = ({ p, deleteHandler }) => {
-  return (
-    <li>
-      {p.name} {p.number} 
-      <button onClick={() => deleteHandler(p)}>delete</button>
-    </li>
-  )
-}
 
 const App = () => {
   const [ persons, setPersons ] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setFilter ] = useState('')
+  const [ notification, setNotification ] = 
+    useState({text: '', type: 'error'})
+  const resetNotification = () => {
+    setTimeout(() => {
+      setNotification({text: '', type: ''})
+    }, 3000)
+  }
 
   useEffect(() => {
     personsService.getAll()
@@ -56,6 +44,8 @@ const App = () => {
         setPersons(persons.concat(response))
         setNewName('')
         setNewNumber('')
+        setNotification({text: `Added ${response.name}`, type: 'success'})
+        resetNotification()
       })
   }
 
@@ -78,6 +68,14 @@ const App = () => {
       .then(response => {
         setPersons(persons.filter(p => p.id !== person.id))
       })
+      .catch(e => {
+        setNotification({
+          text: `Number of ${person.name} has already been removed from server`,
+          type: 'error'
+        })
+        resetNotification()
+        setPersons(persons.filter(p => p.id !== person.id))
+      })
   }
 
   const handleInput = setter => e => setter(e.target.value)
@@ -93,6 +91,7 @@ const App = () => {
   return (
     <div className="App">
       <h2>Phonebook</h2>
+      <Notification message={notification} />
       <Input label='filter shown with' value={filter} onChange={handleFilterChange}/>
       <h2>add a new</h2>
       <PersonForm 
