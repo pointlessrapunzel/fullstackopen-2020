@@ -13,13 +13,33 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setFilter ] = useState('')
+  
+  // Notification logic
+
+  const initialNotification = {type: null, text: null, timeoutId: null}
   const [ notification, setNotification ] = 
-    useState({text: '', type: 'error'})
+    useState(initialNotification)
+
   const resetNotification = () => {
-    setTimeout(() => {
-      setNotification({text: '', type: ''})
+    return setTimeout(() => {
+      setNotification(initialNotification)
     }, 3000)
   }
+
+  const makeNotification = (type, text, reset = true) => {
+    if (notification.timeoutId) clearTimeout(notification.timeoutId)
+    setNotification({
+      type, text, 
+      timeoutId: reset ? resetNotification() : null
+    })
+  }
+
+  const makeErrorMessage = (text) => makeNotification('error', text)
+  const makeSuccessMessage = (text) => makeNotification('success', text)
+  const makePermanentErrorMessage = (text) => makeNotification('error', text, false)
+
+
+  // Communication with server and event handling logic
 
   useEffect(() => {
     personsService.getAll()
@@ -44,8 +64,11 @@ const App = () => {
         setPersons(persons.concat(response))
         setNewName('')
         setNewNumber('')
-        setNotification({text: `Added ${response.name}`, type: 'success'})
-        resetNotification()
+        makeSuccessMessage(`Added ${response.name}`)
+      })
+      .catch(e => {
+        console.log(e.response.data)
+        makePermanentErrorMessage(e.response.data)
       })
   }
 
@@ -60,20 +83,21 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
+      .catch(e => {
+        console.error(e.response.data)
+        makePermanentErrorMessage(e.response.data)
+      })
   }
 
   const handleDeletePerson = person => {
     if (!window.confirm(`Delete ${person.name}?`)) return
     personsService.remove(person.id)
       .then(response => {
+        makeSuccessMessage(`${person.name} has been successfully deleted`)
         setPersons(persons.filter(p => p.id !== person.id))
       })
       .catch(e => {
-        setNotification({
-          text: `Number of ${person.name} has already been removed from server`,
-          type: 'error'
-        })
-        resetNotification()
+        makeErrorMessage(`Number of ${person.name} has already been removed from server`, )
         setPersons(persons.filter(p => p.id !== person.id))
       })
   }
