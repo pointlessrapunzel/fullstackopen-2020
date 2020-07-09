@@ -97,3 +97,20 @@ describe('most blogs', () => {
     expect(listHelper.mostBlogs([])).toEqual(null)
   })
 })
+
+describe('most likes', () => {
+  test('when only one blog', () => {
+    expect(listHelper.mostLikes(listWithOneBlog))
+      .toEqual({ author: listWithOneBlog[0].author, likes: 5 })
+  })
+
+  test('when list has several blogs', () => {
+    expect(listHelper.mostLikes(blogs))
+      .toEqual({ author: 'Edsger W. Dijkstra', likes: 17 })
+  })
+
+  test('when list is empty', () => {
+    expect(listHelper.mostLikes([]))
+      .toBe(null)
+  })
+})
