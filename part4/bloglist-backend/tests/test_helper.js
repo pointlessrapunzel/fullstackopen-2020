@@ -1,3 +1,5 @@
+const Blog = require('../models/blog')
+
 const initialBlogs = [
   { _id: "5a422b3a1b54a676234d17f9", 
     title: "Canonical string reduction", 
@@ -12,4 +14,9 @@ const initialBlogs = [
   }
 ]
 
-module.exports = { initialBlogs }
+const getBlogsFromDb = async () => {
+  const blogs = await Blog.find({})
+  return blogs.map(b => b.toJSON())
+}
+
+module.exports = { initialBlogs, getBlogsFromDb }

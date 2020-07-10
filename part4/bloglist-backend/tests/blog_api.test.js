@@ -36,6 +36,38 @@ describe('when there are initially blogs in the db', () => {
   })
 })
 
+describe('a new blog', () => {
+
+  test('when valid, is successfully added', async () => {
+    const newBlog = new Blog({
+      title: 'New Blog',
+      author: 'New Author',
+      url: 'new url',
+      likes: 1,
+    })
+
+    const savedBlog = await newBlog.save()
+
+    const blogsAtEnd = await helper.getBlogsFromDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+    expect(blogsAtEnd.map(b => b.title)).toContain('New Blog')
+  })
+
+  test('is added, but if the likes property is missing, defaults it to 0', async () => {
+    const newBlog = new Blog({
+      title: 'New Blog',
+      author: 'New Author',
+      url: 'new url',
+    })
+
+    const savedBlog = await newBlog.save()
+
+    const blogsAtEnd = await helper.getBlogsFromDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+    expect(blogsAtEnd.find(b => b.title === 'New Blog').likes).toBe(0)
+  })
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
