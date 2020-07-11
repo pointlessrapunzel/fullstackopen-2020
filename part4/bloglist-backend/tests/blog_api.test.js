@@ -71,6 +71,19 @@ describe('a new blog', () => {
 
     expect(blogsAtEnd.find(b => b.title === 'New Blog').likes).toBe(0)
   })
+
+  test('is not added, when invalid (no title or url), server responds with 400', async () => {
+    const newBlog = {
+      author: 'New Author'
+    }
+
+    const savedBlog = await api.post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+    
+    const blogsAtEnd = await helper.getBlogsFromDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
 })
 
 afterAll(() => {
