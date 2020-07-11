@@ -87,7 +87,7 @@ describe('a new blog', () => {
 })
 
 describe('deletion of a blog', () => {
-  test('is successfull with status code 204, if id is valid', async () => {
+  test('is successful with status code 204, if id is valid', async () => {
     const blogsAtStart = await helper.getBlogsFromDb()
     const blogToDelete = blogsAtStart[0]
 
@@ -101,6 +101,21 @@ describe('deletion of a blog', () => {
   })
 })
 
+describe('updating a blog', () => {
+  test('is successful with a valid id and data, when updating likes', async () => {
+    const blogsAtStart = await helper.getBlogsFromDb()
+    const blogToLike = blogsAtStart[0]
+
+    blogToLike.likes++
+
+    const response = await api
+      .put(`/api/blogs/${blogToLike.id}`)
+      .send(blogToLike)
+      .expect(200)
+
+    expect(response.body.likes).toBe(blogToLike.likes)
+  })
+})
 
 afterAll(() => {
   mongoose.connection.close()
