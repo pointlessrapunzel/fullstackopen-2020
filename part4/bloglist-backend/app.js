@@ -10,7 +10,10 @@ const middleware = require('./utils/middleware')
 
 logger.info(`connecting to database at ${config.MONGODB_URI}`)
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-logger.info(`connected to database at ${config.MONGODB_URI}`)
+  .then(() => {
+    logger.info(`successfully connected to the database at ${config.MONGODB_URI}`)
+  })
+  .catch(e => logger.error('Error connecting to the database:', e))
 
 app.use(cors())
 app.use(express.json())
