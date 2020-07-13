@@ -24,8 +24,11 @@ blogsRouter.post('/', async (req, res, next) => {
       user: user._id
     })
 
+    user.blogs = user.blogs.concat(blog._id)
+
     if (!blog.likes) blog.likes = 0
     const savedBlog = await blog.save()
+    await user.save()
     res.status(201).json(savedBlog)
   } catch(e) { next(e) }
 })
