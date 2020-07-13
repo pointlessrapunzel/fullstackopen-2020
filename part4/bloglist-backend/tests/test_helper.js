@@ -1,5 +1,6 @@
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const bcrypt = require('bcrypt')
 
 const initialBlogs = [
   { _id: "5a422b3a1b54a676234d17f9", 
@@ -15,6 +16,19 @@ const initialBlogs = [
   }
 ]
 
+const initialUsers = [
+  {
+    username: 'root',
+    name: 'Superuser',
+    password: 'Supersekkret'
+  },
+  {
+    username: 'dummy',
+    name: 'Dummy User',
+    password: 'Dummypassword'
+  }
+]
+
 const getBlogsFromDb = async () => {
   const blogs = await Blog.find({})
   return blogs.map(b => b.toJSON())
@@ -25,4 +39,50 @@ const getUsersFromDb = async () => {
   return users.map(u => u.toJSON())
 }
 
-module.exports = { initialBlogs, getBlogsFromDb, getUsersFromDb }
+const createUserObject = async user => {
+  user.passwordHash = await bcrypt.hash(user.password, 10)
+  return new User(user)
+}
+
+const createInitialUsersInDb = async () => {
+  await User.deleteMany({})
+
+  const userObjects = await Promise.all(
+    initialUsers.map(u => createUserObject(u))
+  )
+  
+  await Promise.all(userObjects.map(u => u.save()))
+}
+
+const initDbForTest = async () => {
+  await Blog.deleteMany({})
+
+  const user = await User.findOne({ username: initialUsers[1].username })
+
+  for (let blog of initialBlogs) {
+    const newBlog = new Blog({
+      ...blog,
+      user: user._id
+    })
+    await newBlog.save()
+  }
+}
+
+const loginDummyUser = async (api) => {
+  return await api
+    .post('/api/login')
+    .send({
+      username: initialUsers[1].username,
+      password: initialUsers[1].password
+    })
+}
+
+module.exports = { 
+  initialBlogs, 
+  getBlogsFromDb, 
+  getUsersFromDb, 
+  initialUsers,
+  createInitialUsersInDb,
+  initDbForTest,
+  loginDummyUser
+}

@@ -4,24 +4,17 @@ const api = supertest(app)
 const mongoose = require('mongoose')
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
+const helper = require('./test_helper')
 
 beforeAll(async () => {
-  await User.deleteMany({})
-
-  const passwordHash = await bcrypt.hash('sekret', 10)
-  const user = new User({
-    username: 'root',
-    name: 'Superuser',
-    passwordHash
-  })
-  await user.save()
+  await helper.createInitialUsersInDb()
 })
 
 describe('login', () => {
   test('successful with correct username and password', async () => {
     const reqBody = {
-      username: 'root',
-      password: 'sekret'
+      username: helper.initialUsers[0].username,
+      password: helper.initialUsers[0].password
     }
 
     const response = await api

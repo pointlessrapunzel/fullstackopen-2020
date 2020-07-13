@@ -5,15 +5,14 @@ const Blog = require('../models/blog')
 const mongoose = require('mongoose')
 
 const helper = require('./test_helper')
+const User = require('../models/user')
+
+beforeAll(async () => {
+  await helper.createInitialUsersInDb()
+})
 
 beforeEach(async () => {
-  await Blog.deleteMany({})
-
-  for (let blog of helper.initialBlogs) {
-    const newBlog = new Blog(blog)
-    await newBlog.save()
-  }
-
+  await helper.initDbForTest()
 })
 
 describe('when there are initially blogs in the db', () => {
@@ -36,9 +35,9 @@ describe('when there are initially blogs in the db', () => {
   })
 })
 
-describe('a new blog', () => {
+describe('addition of a new blog', () => {
 
-  test('when valid, is successfully added', async () => {
+  test('is successful when it is valid and the user is authorized', async () => {
     const newBlog = {
       title: 'New Blog',
       author: 'New Author',
@@ -46,8 +45,12 @@ describe('a new blog', () => {
       likes: 1,
     }
 
+    const loginResponse = await helper.loginDummyUser(api)
+    const token = loginResponse.body.token
+
     const savedBlog = await api.post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', `bearer ${token}`)
       .expect(201)
 
     const blogsAtEnd = await helper.getBlogsFromDb()
@@ -62,8 +65,12 @@ describe('a new blog', () => {
       url: 'new url',
     }
 
+    const loginResponse = await helper.loginDummyUser(api)
+    const token = loginResponse.body.token
+
     const savedBlog = await api.post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', `bearer ${token}`)
       .expect(201)
 
     const blogsAtEnd = await helper.getBlogsFromDb()
@@ -72,15 +79,39 @@ describe('a new blog', () => {
     expect(blogsAtEnd.find(b => b.title === 'New Blog').likes).toBe(0)
   })
 
-  test('is not added, when invalid (no title or url), server responds with 400', async () => {
+  test('is unsuccessful, when it does not have a title or url, server responds with 400', async () => {
     const newBlog = {
       author: 'New Author'
     }
 
+    const token = await api
+      .post('/api/login')
+      .send({
+        username: 'root',
+        password: 'Supersekkret'
+      })
+
     const savedBlog = await api.post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', `bearer ${token}`)
       .expect(400)
     
+    const blogsAtEnd = await helper.getBlogsFromDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+  })
+
+  test('is unsuccessful when unauthorized', async () => {
+    const newBlog = {
+      title: 'New Blog',
+      author: 'New Author',
+      url: 'new url',
+      likes: 1,
+    }
+
+    const savedBlog = await api.post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+
     const blogsAtEnd = await helper.getBlogsFromDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
   })
@@ -91,13 +122,31 @@ describe('deletion of a blog', () => {
     const blogsAtStart = await helper.getBlogsFromDb()
     const blogToDelete = blogsAtStart[0]
 
-    await api.delete(`/api/blogs/${blogToDelete.id}`)
+    const loginResponse = await helper.loginDummyUser(api)
+    const token = loginResponse.body.token
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `bearer ${token}`)
       .expect(204)
 
     const blogsAtEnd = await helper.getBlogsFromDb()
     expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
 
     expect(blogsAtEnd.map(b => b.title)).not.toContain(blogToDelete.title)
+  })
+
+  test('is unsuccessful with status code 401 when user is not authorized', async () => {
+    const blogsAtStart = await helper.getBlogsFromDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api.delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(401)
+
+    const blogsAtEnd = await helper.getBlogsFromDb()
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length)
+
+    expect(blogsAtEnd.map(b => b.title)).toContain(blogToDelete.title)
   })
 })
 
