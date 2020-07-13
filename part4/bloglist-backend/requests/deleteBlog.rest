@@ -1,1 +1,2 @@
 DELETE http://localhost:3001/api/blogs/:id HTTP/1.1
+Authorization: bearer :token
