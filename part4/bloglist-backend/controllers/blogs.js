@@ -3,14 +3,6 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 
-const getTokenFrom = req => {
-  const authHeader = req.get('Authorization')
-  if (authHeader && authHeader.match(/^bearer/i)) {
-    return authHeader.substring(7)
-  }
-  return null
-}
-
 blogsRouter.get('/', async (req, res, next) => {
   try {
     const blogs = await Blog
@@ -27,11 +19,11 @@ blogsRouter.post('/', async (req, res, next) => {
     return res.status(400).json({ error: 'Missing title or url' })
   }
 
-  const token = getTokenFrom(req)
+  const token = req.token
 
   try {
     const decodedToken = jwt.verify(token, process.env.SECRET)
-    if (!decodedToken.id) {
+    if (!(token && decodedToken.id)) {
       throw new jwt.JsonWebTokenError('Token is invalid')
     }
 
