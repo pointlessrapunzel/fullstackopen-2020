@@ -10,18 +10,25 @@ usersRouter.get('/', async (req, res) => {
 usersRouter.post('/', async (req, res, next) => {
   const body = req.body
 
-  const passwordHash = await bcrypt.hash(body.password, 10)
-  const newUser = new User({
-    username: body.username,
-    name: body.name,
-    passwordHash
-  })
+  const password = body.password
 
   try {
+    if (password.length < 3) {
+      return res.status(400).json({
+        error: 'invalid password'
+      })
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10)
+    const newUser = new User({
+      username: body.username,
+      name: body.name,
+      passwordHash
+    })
+
     const savedUser = await newUser.save()
     res.status(201).json(savedUser)
   } catch(e) { next(e) }
-
 })
 
 module.exports = usersRouter

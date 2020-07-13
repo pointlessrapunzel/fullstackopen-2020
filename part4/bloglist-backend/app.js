@@ -10,7 +10,12 @@ const middleware = require('./utils/middleware')
 const usersRouter = require('./controllers/users')
 
 logger.info(`connecting to database at ${config.MONGODB_URI}`)
-mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: true })
+mongoose.connect(config.MONGODB_URI, { 
+    useNewUrlParser: true,
+    useUnifiedTopology: true, 
+    useFindAndModify: true,
+    useCreateIndex: true 
+  })
   .then(() => {
     logger.info(`successfully connected to the database at ${config.MONGODB_URI}`)
   })
@@ -24,6 +29,7 @@ app.use(middleware.requestLogger)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 
+app.use(middleware.errorHandler)
 app.use(middleware.unknownEndpoint)
 
 module.exports = app
