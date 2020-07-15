@@ -32,12 +32,12 @@ blogsRouter.post('/', async (req, res, next) => {
       ...body,
       user: user._id
     })
-
-    user.blogs = user.blogs.concat(blog._id)
-
     if (!blog.likes) blog.likes = 0
     const savedBlog = await blog.save()
+
+    user.blogs = user.blogs.concat(blog._id)
     await user.save()
+
     res.status(201).json(savedBlog)
   } catch(e) { next(e) }
 })
@@ -51,21 +51,27 @@ blogsRouter.delete('/:id', async (req, res, next) => {
   }
 
   try {
+    const decodedToken = jwt.verify(req.token, process.env.SECRET)
+
+    const user = await User.findById(decodedToken.id)
     const blog = await Blog.findById(req.params.id)
     if (!blog) {
       return res.status(400).json({
         error: 'This blog does not exist.'
       })
     }
-    const userId = blog.user.toString()
-    const decodedToken = jwt.verify(req.token, process.env.SECRET)
-    if (userId !== decodedToken.id) {
+    if (blog.user.toString() !== user.id.toString()) {
       return res.status(401).json({
         error: 'A blog can be deleted only by the user who created it.'
       })
     }
     
-    await Blog.findByIdAndRemove(req.params.id)
+    await blog.remove()
+    user.blogs = user.blogs.filter(b => 
+      b.id.toString() !== req.params.id.toString()
+    )
+    await user.save()
+
     res.status(204).end()
   } catch(e) { next(e) }
 })
@@ -75,7 +81,6 @@ blogsRouter.put('/:id', async (req, res, next) => {
     const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true })
     res.status(200).json(updatedBlog)
   } catch(e) { 
-    console.error(e)
     next(e) }
 })
 
