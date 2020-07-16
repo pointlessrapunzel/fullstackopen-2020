@@ -75,12 +75,22 @@ const BlogForm = ({saveBlog}) => {
   )
 }
 
+const Notification = ({ notification }) => {
+  if (!notification) return null
+  const { message, type } = notification
+  let typeClass = `notification--${type}`
+
+  return (
+    <div className={`notification ${typeClass}`}>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
-  let credentials = {}
 
   // BLOGS LOGIC
+  const [blogs, setBlogs] = useState([])
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -95,9 +105,12 @@ const App = () => {
 
     const savedBlog = await blogService.saveBlog(blogData)
     setBlogs(blogs.concat(savedBlog))
+    flashSuccessMessage(`a new blog ${savedBlog.title} by ${savedBlog.author} added`)
   }
 
   // LOGIN LOGIC
+  const [user, setUser] = useState(null)
+  let credentials = {}
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
@@ -110,8 +123,12 @@ const App = () => {
 
   const handleLogin = async e => {
     const loginResponse = await loginService.login(credentials)
-      .catch(e => console.error(e))
+      .catch(e => {
+        console.error(e)
+        flashErrorMessage('wrong username or password')
+      })
 
+    if (!loginResponse) return
     blogService.setToken(loginResponse.token)
     window.localStorage.setItem('loggedUser', JSON.stringify(loginResponse))
     setUser(loginResponse)
@@ -122,18 +139,39 @@ const App = () => {
     setUser(null)
   }
 
+  // NOTIFICATION LOGIC
+  const [notification, setNotification] = useState(null)
+
+  const flashNotification = (message, type) => {
+    setNotification({message, type})
+    setTimeout(() => {
+      setNotification(null)
+    }, 4000)
+  }
+
+  const flashErrorMessage = msg => flashNotification(msg, 'error')
+  const flashSuccessMessage = msg => flashNotification(msg, 'success')
+
+
+  // RENDERING LOGIC
+
   if (!user) {
     return (
-      <LoginForm 
-        handleLogin={handleLogin}
-        credentials={credentials}
-      />
+      <div>
+        <h2>log in to application</h2>
+        <Notification notification={notification} />
+        <LoginForm 
+          handleLogin={handleLogin}
+          credentials={credentials}
+        />
+      </div>
     )
   }
 
   return (
     <div>
       <h2>blogs</h2>
+      <Notification notification={notification} />
       <p>{ user.name } logged in 
         <button onClick={handleLogout}>log out</button>
       </p>
