@@ -28,6 +28,6 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
       <button onClick={toggleShown}>{shown ? 'hide' : 'view'}</button>
       {shown && renderDetails()}
     </div>
-)}
+  )}
 
 export default Blog

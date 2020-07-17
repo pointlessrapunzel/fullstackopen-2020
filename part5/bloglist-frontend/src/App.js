@@ -15,7 +15,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   const handleSaveBlog = async (title, author, url) => {
@@ -33,7 +33,6 @@ const App = () => {
 
   // LOGIN LOGIC
   const [user, setUser] = useState(null)
-  let credentials = {}
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
@@ -44,7 +43,7 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async e => {
+  const handleLogin = async credentials => {
     const loginResponse = await loginService.login(credentials)
       .catch(e => {
         console.error(e)
@@ -66,7 +65,7 @@ const App = () => {
   const [notification, setNotification] = useState(null)
 
   const flashNotification = (message, type) => {
-    setNotification({message, type})
+    setNotification({ message, type })
     setTimeout(() => {
       setNotification(null)
     }, 4000)
@@ -87,7 +86,7 @@ const App = () => {
 
   // DELETE LOGIC
   const handleDeleteBlog = async blog => {
-    const confirm = 
+    const confirm =
       window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
     if (!confirm) return
 
@@ -107,9 +106,8 @@ const App = () => {
       <div>
         <h2>log in to application</h2>
         <Notification notification={notification} />
-        <LoginForm 
+        <LoginForm
           handleLogin={handleLogin}
-          credentials={credentials}
         />
       </div>
     )
@@ -119,17 +117,17 @@ const App = () => {
     <div>
       <h2>blogs</h2>
       <Notification notification={notification} />
-      <p>{ user.name } logged in 
+      <p>{ user.name } logged in
         <button onClick={handleLogout}>log out</button>
       </p>
       <Togglable buttonLabel={'new blog'} ref={blogFormRef}>
         <BlogForm saveBlog={handleSaveBlog} />
       </Togglable>
       {sortedBlogs.map(blog =>
-        <Blog 
-          key={blog.id} 
-          blog={blog} 
-          handleLike={() => handleLikeBlog(blog)} 
+        <Blog
+          key={blog.id}
+          blog={blog}
+          handleLike={() => handleLikeBlog(blog)}
           handleDelete={() => handleDeleteBlog(blog)}
         />
       )}

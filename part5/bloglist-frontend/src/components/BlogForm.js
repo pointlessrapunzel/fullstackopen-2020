@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 
-const BlogForm = ({saveBlog}) => {
+const BlogForm = ({ saveBlog }) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-  const setInput = (setter) => ({target}) => setter(target.value) 
+  const setInput = (setter) => ({ target }) => setter(target.value)
   const submitForm = e => {
     e.preventDefault()
     saveBlog(title, author, url)
@@ -22,21 +22,21 @@ const BlogForm = ({saveBlog}) => {
       <form onSubmit={submitForm}>
         <div>
           title:
-          <input 
+          <input
             value={title}
             onChange={setInput(setTitle)}
           ></input>
         </div>
         <div>
           author:
-          <input 
+          <input
             value={author}
             onChange={setInput(setAuthor)}
           ></input>
         </div>
         <div>
           url:
-          <input 
+          <input
             value={url}
             onChange={setInput(setUrl)}
           ></input>
