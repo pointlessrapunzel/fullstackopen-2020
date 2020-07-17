@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -10,6 +11,7 @@ const App = () => {
 
   // BLOGS LOGIC
   const [blogs, setBlogs] = useState([])
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -23,6 +25,7 @@ const App = () => {
     }
 
     const savedBlog = await blogService.saveBlog(blogData)
+    blogFormRef.current.toggleVisible()
     setBlogs(blogs.concat(savedBlog))
     flashSuccessMessage(`a new blog ${savedBlog.title} by ${savedBlog.author} added`)
   }
@@ -94,7 +97,9 @@ const App = () => {
       <p>{ user.name } logged in 
         <button onClick={handleLogout}>log out</button>
       </p>
-      <BlogForm saveBlog={handleSaveBlog} />
+      <Togglable buttonLabel={'new blog'} ref={blogFormRef}>
+        <BlogForm saveBlog={handleSaveBlog} />
+      </Togglable>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
