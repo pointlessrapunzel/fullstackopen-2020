@@ -29,6 +29,8 @@ const App = () => {
     flashSuccessMessage(`a new blog ${savedBlog.title} by ${savedBlog.author} added`)
   }
 
+  const sortedBlogs = blogs.sort((b1, b2) => b2.likes - b1.likes)
+
   // LOGIN LOGIC
   const [user, setUser] = useState(null)
   let credentials = {}
@@ -109,7 +111,7 @@ const App = () => {
       <Togglable buttonLabel={'new blog'} ref={blogFormRef}>
         <BlogForm saveBlog={handleSaveBlog} />
       </Togglable>
-      {blogs.map(blog =>
+      {sortedBlogs.map(blog =>
         <Blog key={blog.id} blog={blog} handleLike={() => handleLikeBlog(blog)} />
       )}
     </div>
