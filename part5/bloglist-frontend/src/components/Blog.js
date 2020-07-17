@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 
-const Blog = ({ blog, handleLike }) => {
+const Blog = ({ blog, handleLike, handleDelete }) => {
   const [shown, setShown] = useState(false)
 
   const toggleShown = () => setShown(!shown)
+  const loggedUser = JSON.parse(window.localStorage.getItem('loggedUser')).username
 
   const renderDetails = () => (
     <div>
@@ -13,6 +14,11 @@ const Blog = ({ blog, handleLike }) => {
       <button onClick={handleLike}>like</button>
       <br />
       {blog.user.name}
+      <br />
+      {
+        blog.user.username === loggedUser &&
+        <button onClick={handleDelete}>delete</button>
+      }
     </div>
   )
 

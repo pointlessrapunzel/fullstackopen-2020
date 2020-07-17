@@ -85,6 +85,20 @@ const App = () => {
     }
   }
 
+  // DELETE LOGIC
+  const handleDeleteBlog = async blog => {
+    const confirm = 
+      window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)
+    if (!confirm) return
+
+    try {
+      await blogService.deleteBlog(blog.id)
+      setBlogs(blogs.filter(b => b.id !== blog.id))
+    } catch(e) {
+      console.log(e.message)
+      flashErrorMessage(e.message)
+    }
+  }
 
   // RENDERING LOGIC
 
@@ -112,7 +126,12 @@ const App = () => {
         <BlogForm saveBlog={handleSaveBlog} />
       </Togglable>
       {sortedBlogs.map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={() => handleLikeBlog(blog)} />
+        <Blog 
+          key={blog.id} 
+          blog={blog} 
+          handleLike={() => handleLikeBlog(blog)} 
+          handleDelete={() => handleDeleteBlog(blog)}
+        />
       )}
     </div>
   )
