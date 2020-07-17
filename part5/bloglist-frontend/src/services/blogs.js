@@ -21,4 +21,13 @@ const saveBlog = async blogData => {
   return res.data
 }
 
-export default { getAll, saveBlog, setToken }
+const likeBlog = async (id, blogData) => {
+  blogData.likes++
+  // server expects it to be ObjectId, not populated data
+  blogData.user = blogData.user.id 
+
+  const res = await axios.put(`${baseUrl}/${id}`, blogData)
+  return res.data
+}
+
+export default { getAll, saveBlog, likeBlog, setToken }

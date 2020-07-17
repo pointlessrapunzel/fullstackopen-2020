@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-const Blog = ({ blog }) => {
+
+const Blog = ({ blog, handleLike }) => {
   const [shown, setShown] = useState(false)
 
   const toggleShown = () => setShown(!shown)
-  const handleLike = () => console.log(blog.title, 'liked!')
 
   const renderDetails = () => (
     <div>

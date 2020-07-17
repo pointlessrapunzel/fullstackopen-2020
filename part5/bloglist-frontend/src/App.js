@@ -8,7 +8,6 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
-
   // BLOGS LOGIC
   const [blogs, setBlogs] = useState([])
   const blogFormRef = useRef()
@@ -74,6 +73,16 @@ const App = () => {
   const flashErrorMessage = msg => flashNotification(msg, 'error')
   const flashSuccessMessage = msg => flashNotification(msg, 'success')
 
+  // LIKE LOGIC
+  const handleLikeBlog = async blog => {
+    try {
+      const likedBlog = await blogService.likeBlog(blog.id, blog)
+      setBlogs(blogs.map(b => b.id === likedBlog.id ? likedBlog : b))
+    } catch(e) {
+      console.error(e)
+    }
+  }
+
 
   // RENDERING LOGIC
 
@@ -101,7 +110,7 @@ const App = () => {
         <BlogForm saveBlog={handleSaveBlog} />
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleLike={() => handleLikeBlog(blog)} />
       )}
     </div>
   )
