@@ -38,3 +38,20 @@ test('Likes and url are shown after the view button clicked', () => {
   expect(component.container).toHaveTextContent('likes 10')
   expect(component.container).toHaveTextContent('//url')
 })
+
+test('Like button functions correctly', () => {
+  const mockLikeHandler = jest.fn()
+
+  const component = render(
+    <Blog blog={testBlog} handleLike={mockLikeHandler} />
+  )
+
+  const viewButton = component.getByText('view')
+  fireEvent.click(viewButton)
+
+  const likeButton = component.getByText('like')
+  fireEvent.click(likeButton)
+  fireEvent.click(likeButton)
+
+  expect(mockLikeHandler.mock.calls).toHaveLength(2)
+})
