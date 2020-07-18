@@ -4,7 +4,9 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
   const [shown, setShown] = useState(false)
 
   const toggleShown = () => setShown(!shown)
-  const loggedUser = JSON.parse(window.localStorage.getItem('loggedUser')).username
+  const loggedUser = JSON.parse(window.localStorage.getItem('loggedUser'))
+  const loggedUsername = loggedUser ? loggedUser.username : null
+
 
   const renderDetails = () => (
     <div>
@@ -16,7 +18,7 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
       {blog.user.name}
       <br />
       {
-        blog.user.username === loggedUser &&
+        blog.user.username === loggedUsername &&
         <button onClick={handleDelete}>delete</button>
       }
     </div>
