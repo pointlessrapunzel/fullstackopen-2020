@@ -9,11 +9,10 @@ const BlogForm = ({ saveBlog }) => {
   const submitForm = e => {
     e.preventDefault()
     saveBlog(title, author, url)
-      .then(() => {
-        setTitle('')
-        setAuthor('')
-        setUrl('')
-      })
+
+    setTitle('')
+    setAuthor('')
+    setUrl('')
   }
 
   return (
@@ -23,6 +22,7 @@ const BlogForm = ({ saveBlog }) => {
         <div>
           title:
           <input
+            id='title'
             value={title}
             onChange={setInput(setTitle)}
           ></input>
@@ -30,6 +30,7 @@ const BlogForm = ({ saveBlog }) => {
         <div>
           author:
           <input
+            id='author'
             value={author}
             onChange={setInput(setAuthor)}
           ></input>
@@ -37,6 +38,7 @@ const BlogForm = ({ saveBlog }) => {
         <div>
           url:
           <input
+            id='url'
             value={url}
             onChange={setInput(setUrl)}
           ></input>
