@@ -6,12 +6,19 @@ const LoginForm = ({ handleLogin }) => {
   const [password, setPassword] = useState('')
 
   return (
-    <form onSubmit={e => {
-      e.preventDefault()
-      handleLogin({ username, password })
-    }}>
+    <form
+      id='form--login'
+      onSubmit={e => {
+        e.preventDefault()
+        handleLogin({ username, password })
+      }
+      }>
       <div>
-        username: <input value={username} onChange={({ target }) => setUsername(target.value)} />
+        username:
+        <input
+          value={username}
+          onChange={({ target }) => setUsername(target.value)}
+        />
       </div>
       <div>
         password:
