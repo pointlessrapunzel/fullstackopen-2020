@@ -13,14 +13,14 @@ const LoginForm = ({ handleLogin }) => {
         handleLogin({ username, password })
       }
       }>
-      <div>
+      <div id='form__username'>
         username:
         <input
           value={username}
           onChange={({ target }) => setUsername(target.value)}
         />
       </div>
-      <div>
+      <div id='form__password'>
         password:
         <input
           value={password}
