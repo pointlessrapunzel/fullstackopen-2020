@@ -13,7 +13,7 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
       {blog.url}
       <br />
       likes {blog.likes}
-      <button onClick={handleLike}>like</button>
+      <button className='btn--like' onClick={handleLike}>like</button>
       <br />
       {blog.user.name}
       <br />
