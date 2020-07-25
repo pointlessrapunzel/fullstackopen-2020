@@ -43,7 +43,7 @@ const BlogForm = ({ saveBlog }) => {
             onChange={setInput(setUrl)}
           ></input>
         </div>
-        <button type='submit'>save</button>
+        <button id='save-blog-btn' type='submit'>save</button>
       </form>
     </div>
   )

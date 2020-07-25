@@ -2,7 +2,7 @@ describe('Blog app', function() {
   beforeEach(function() {
     cy.request('POST', `${Cypress.env('baseServerUrl')}/api/testing/reset`)
     cy.request('POST', `${Cypress.env('baseServerUrl')}/api/users`, {
-      username: 'root', name: 'Test User', password: 'sekret'
+      username: 'testuser', name: 'Test User', password: 'sekret'
     })
     cy.visit('/')
   })
@@ -13,10 +13,9 @@ describe('Blog app', function() {
   })
 
   describe('Login', function() {
-
     it('succeeds with correct credentials', function() {
       cy.get('#form__username')
-        .find('input').type('root')
+        .find('input').type('testuser')
       cy.get('#form__password')
         .find('input').type('sekret')
       cy.get('#form--login')
@@ -27,7 +26,7 @@ describe('Blog app', function() {
 
     it('fails', function() {
       cy.get('#form__username')
-        .find('input').type('root')
+        .find('input').type('testuser')
       cy.get('#form__password')
         .find('input').type('wrong')
       cy.get('#form--login')
@@ -40,5 +39,23 @@ describe('Blog app', function() {
     })
   })
 
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login('testuser', 'sekret')
+    })
+
+    it('A blog can be created', function() {
+      cy.contains('new blog').click()
+      cy.get('#title')
+        .type('New Test Blog')
+      cy.get('#author')
+        .type('New Test Author')
+      cy.get('#url')
+        .type('http://test-url.com')
+
+      cy.get('#save-blog-btn').click()
+      cy.contains('New Test Blog New Test Author')
+    })
+  })
 
 })
