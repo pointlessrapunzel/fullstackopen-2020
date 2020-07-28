@@ -43,3 +43,9 @@ Cypress.Commands.add('createBlog', (title, author, url) => {
     headers: { Authorization: token }
   })
 })
+
+Cypress.Commands.add('createUser', (username, name, password) => {
+  cy.request('POST', `${Cypress.env('baseServerUrl')}/api/users`, {
+    username, name, password
+  })
+})

@@ -1,9 +1,8 @@
 describe('Blog app', function() {
   beforeEach(function() {
     cy.request('POST', `${Cypress.env('baseServerUrl')}/api/testing/reset`)
-    cy.request('POST', `${Cypress.env('baseServerUrl')}/api/users`, {
-      username: 'testuser', name: 'Test User', password: 'sekret'
-    })
+    cy.createUser('testuser', 'Test User', 'sekret')
+    cy.createUser('testuser2', 'Test User 2', 'sekret2')
     cy.visit('/')
   })
 
@@ -57,7 +56,7 @@ describe('Blog app', function() {
       cy.contains('New Test Blog New Test Author')
     })
 
-    describe.only('And a few blogs already exist', function() {
+    describe('And a few blogs already exist', function() {
       beforeEach(function() {
         cy.createBlog('first blog', 'first author', 'http://blog.com')
         cy.createBlog('second blog', 'first author', 'http://blog2.com')
@@ -79,6 +78,36 @@ describe('Blog app', function() {
         cy.get('@secondBlog')
           .contains('likes 1')
       })
+
+      it('can delete blogs if the creator', function() {
+        cy.contains('second blog first author')
+          .as('secondBlog')
+          .contains('view')
+          .click()
+        cy.get('@secondBlog')
+          .find('.btn--delete')
+          .click()
+
+        cy.get('html').should('not.contain', 'second blog first author')
+      })
+    })
+  })
+
+  describe.only('When logged in and other users created blogs exist', function() {
+    beforeEach(function() {
+      cy.login('testuser2', 'sekret2')
+      cy.createBlog('blog by another user', 'author', 'http://url')
+      cy.clearLocalStorage('loggedUser')
+      cy.login('testuser', 'sekret')
+    })
+
+    it('can not delete blogs if not the creator', function() {
+      cy.contains('blog by another user')
+        .as('blog')
+        .contains('view')
+        .click()
+      cy.get('@blog')
+        .find('.btn--delele').should('not.exist')
     })
   })
 

@@ -19,7 +19,7 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
       <br />
       {
         blog.user.username === loggedUsername &&
-        <button onClick={handleDelete}>delete</button>
+        <button className='btn--delete' onClick={handleDelete}>delete</button>
       }
     </div>
   )
