@@ -56,11 +56,11 @@ describe('Blog app', function() {
       cy.contains('New Test Blog New Test Author')
     })
 
-    describe('And a few blogs already exist', function() {
+    describe.only('And a few blogs already exist', function() {
       beforeEach(function() {
-        cy.createBlog('first blog', 'first author', 'http://blog.com')
-        cy.createBlog('second blog', 'first author', 'http://blog2.com')
-        cy.createBlog('first blog', 'second author', 'http://bblog.com')
+        cy.createBlog('first blog', 'first author', 'http://blog.com', 4)
+        cy.createBlog('second blog', 'first author', 'http://blog2.com', 10)
+        cy.createBlog('first blog', 'second author', 'http://bblog.com', 5)
           .then(() => {
             cy.visit('/')
           })
@@ -72,11 +72,11 @@ describe('Blog app', function() {
           .find('button')
           .click()
         cy.get('@secondBlog')
-          .contains('likes 0')
+          .contains('likes 10')
           .find('.Blog__btn-like')
           .click()
         cy.get('@secondBlog')
-          .contains('likes 1')
+          .contains('likes 11')
       })
 
       it('can delete blogs if the creator', function() {
@@ -89,6 +89,18 @@ describe('Blog app', function() {
           .click()
 
         cy.get('html').should('not.contain', 'second blog first author')
+      })
+
+      it.only('the blogs are sorted by likes', function() {
+        cy.get('.Blog')
+          .then($blogs => {
+            for (let i = 0; i < $blogs.length; i++) {
+              cy.wrap($blogs[i]).find('button').click()
+            }
+            cy.wrap($blogs[0]).contains('10')
+            cy.wrap($blogs[1]).contains('5')
+            cy.wrap($blogs[2]).contains('4')
+          })
       })
     })
   })

@@ -34,12 +34,12 @@ Cypress.Commands.add('login', (username, password) => {
     })
 })
 
-Cypress.Commands.add('createBlog', (title, author, url) => {
+Cypress.Commands.add('createBlog', (title, author, url, likes = 0) => {
   const token = `bearer ${JSON.parse(localStorage.getItem('loggedUser')).token}`
   cy.request({
     url: `${Cypress.env('baseServerUrl')}/api/blogs`,
     method: 'POST',
-    body: { title, author, url },
+    body: { title, author, url, likes },
     headers: { Authorization: token }
   })
 })
