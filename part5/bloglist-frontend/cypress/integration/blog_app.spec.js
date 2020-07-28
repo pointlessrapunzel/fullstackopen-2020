@@ -73,7 +73,7 @@ describe('Blog app', function() {
           .click()
         cy.get('@secondBlog')
           .contains('likes 0')
-          .find('.btn--like')
+          .find('.Blog__btn-like')
           .click()
         cy.get('@secondBlog')
           .contains('likes 1')
@@ -85,7 +85,7 @@ describe('Blog app', function() {
           .contains('view')
           .click()
         cy.get('@secondBlog')
-          .find('.btn--delete')
+          .find('.Blog__btn-delete')
           .click()
 
         cy.get('html').should('not.contain', 'second blog first author')
@@ -93,7 +93,7 @@ describe('Blog app', function() {
     })
   })
 
-  describe.only('When logged in and other users created blogs exist', function() {
+  describe('When logged in and other users created blogs exist', function() {
     beforeEach(function() {
       cy.login('testuser2', 'sekret2')
       cy.createBlog('blog by another user', 'author', 'http://url')
@@ -107,7 +107,7 @@ describe('Blog app', function() {
         .contains('view')
         .click()
       cy.get('@blog')
-        .find('.btn--delele').should('not.exist')
+        .find('.Blog__btn-delete').should('not.exist')
     })
   })
 
