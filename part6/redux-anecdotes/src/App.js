@@ -14,6 +14,26 @@ const App = () => {
     })
   }
 
+  const handleAddAnecdote = e => {
+    e.preventDefault()
+    const content = e.target.anecdote.value
+    if (!content) {
+      console.log('empty anecdote!')
+      return
+    }
+    e.target.anecdote.value = ''
+    addAnecdote(content)
+  }
+
+  const addAnecdote = content => {
+    dispatch({
+      type: 'NEW_ANECDOTE',
+      data: {
+        content
+      }
+    })
+  }
+
   return (
     <div>
       <h2>Anecdotes</h2>
@@ -29,8 +49,8 @@ const App = () => {
         </div>
       )}
       <h2>create new</h2>
-      <form>
-        <div><input /></div>
+      <form onSubmit={handleAddAnecdote}>
+        <div><input name='anecdote' /></div>
         <button>create</button>
       </form>
     </div>
