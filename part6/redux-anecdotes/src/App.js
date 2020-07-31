@@ -1,20 +1,12 @@
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { newAnecdote, vote } from './reducers/anecdoteReducer'
 
 const App = () => {
   const anecdotes = useSelector(state => state)
   const dispatch = useDispatch()
 
   anecdotes.sort((a, b) => b.votes - a.votes)
-
-  const vote = (id) => {
-    dispatch({
-      type: 'VOTE',
-      data: {
-        id
-      }
-    })
-  }
 
   const handleAddAnecdote = e => {
     e.preventDefault()
@@ -24,16 +16,11 @@ const App = () => {
       return
     }
     e.target.anecdote.value = ''
-    addAnecdote(content)
+    dispatch(newAnecdote(content))
   }
 
-  const addAnecdote = content => {
-    dispatch({
-      type: 'NEW_ANECDOTE',
-      data: {
-        content
-      }
-    })
+  const handleVote = id => {
+    dispatch(vote(id))
   }
 
   return (
@@ -46,7 +33,7 @@ const App = () => {
           </div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button>
+            <button onClick={handleVote(anecdote.id)}>vote</button>
           </div>
         </div>
       )}
