@@ -1,27 +1,31 @@
-const initState = {
-  message: 'yo',
-  type: 'error'
-}
-
-const notificationReducer = (state = initState, action) => {
+const notificationReducer = (state = null, action) => {
   switch(action.type) {
     case 'SET_NOTIFICATION':
-      return ({ 
+      if (state && state.timeout) {
+        clearTimeout(state.timeout)
+      }
+
+      return ({
         message: action.data.message, 
-        type: action.data.type 
+        timeout: action.data.timeout,
+        type: action.data.type || 'default' 
       })
-    case 'EMPTY_NOTIFICATION':
+    case 'REMOVE_NOTIFICATION': 
       return null
     default:
       return state
   }
 }
 
-export const setNotification = ({ message, type }) => ({
+export const setNotification = (message, timeout, type = '') => ({
   type: 'SET_NOTIFICATION',
   data: {
-    message, type 
+    message, timeout, type 
   } 
 }) 
+
+export const removeNotification = () => ({
+  type: 'REMOVE_NOTIFICATION'
+})
 
 export default notificationReducer
