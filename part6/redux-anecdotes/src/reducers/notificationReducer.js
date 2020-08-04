@@ -21,7 +21,7 @@ const removeNotification = () => ({
   type: 'REMOVE_NOTIFICATION'
 })
 
-export const setNotification = (message, secondsShown, type = '') => {
+export const setNotification = (message, secondsShown = 5, type = '') => {
   return async dispatch => {
     const removalTimeoutId = setTimeout(() => dispatch(removeNotification()), secondsShown * 1000)
     dispatch({
