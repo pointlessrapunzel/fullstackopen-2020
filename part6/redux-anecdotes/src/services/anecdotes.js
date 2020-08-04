@@ -6,7 +6,12 @@ const getAll = async () => {
   return res.data
 }
 
+const createNew = async anecdote => {
+  const res = await axios.post(baseUrl, anecdote)
+  return res.data
+}
+
 export default {
   getAll,
-
+  createNew,
 }
