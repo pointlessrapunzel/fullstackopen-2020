@@ -4,6 +4,21 @@ const RATINGS = {
   3: "excellent",
 } as const;
 
+function exerciseCalculator() {
+  const target = +process.argv[2];
+  const dailyHours = process.argv.slice(3).map((v) => +v);
+
+  if ([target, ...dailyHours].some((v) => Number.isNaN(v))) {
+    console.log("One of the provided arguments wasn't a number.");
+    return process.exit(1);
+  }
+
+  const res = calculateExercises(dailyHours, target);
+  console.log(res);
+}
+
+exerciseCalculator();
+
 interface Result {
   periodLength: number;
   trainingDays: number;
@@ -33,16 +48,3 @@ function calculateExercises(dailyHours: number[], target: number): Result {
     average,
   };
 }
-
-const expected = {
-  periodLength: 7,
-  trainingDays: 5,
-  success: false,
-  rating: 2,
-  ratingDescription: "not too bad but could be better",
-  target: 2,
-  average: 1.9285714285714286,
-};
-const testParams = [[3, 0, 2, 4.5, 0, 3, 1], 2] as [number[], number];
-
-console.log(calculateExercises(...testParams));

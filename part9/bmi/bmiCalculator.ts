@@ -1,4 +1,4 @@
-function main() {
+function bmiCalculator() {
   if (process.argv.length != 4) {
     printUsage();
     console.error("Height and weight should be provided.");
@@ -38,7 +38,7 @@ function calculateBmi(height: number, weight: number) {
   }
 }
 
-main();
+bmiCalculator();
 
 function printUsage() {
   console.info(
