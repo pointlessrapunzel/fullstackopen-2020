@@ -1,15 +1,48 @@
+function main() {
+  if (process.argv.length != 4) {
+    printUsage();
+    console.error("Height and weight should be provided.");
+    process.exit(1);
+  }
+
+  const height = +process.argv[2];
+  const weight = +process.argv[3];
+
+  if (Number.isNaN(height) || Number.isNaN(weight)) {
+    printUsage();
+    console.error("Height and weight should be numbers.");
+    process.exit(2);
+  }
+
+  console.log(`BMI for height ${height}cm and weight ${weight}kg:`);
+  console.log(calculateBmi(height, weight));
+}
+
+const BMIThresholds = [
+  [16, "Underweight (Severe thinness)"],
+  [17, "Underweight (Moderate thinness)"],
+  [18.5, "Underweight (Mild thinness)"],
+  [25, "Normal (healthy weight)"],
+  [30, "Overweight (Pre-obese)"],
+  [35, "Obese (Class I)"],
+  [40, "Obese (Class II)"],
+  [Number.MAX_SAFE_INTEGER, "Obese (Class III)"],
+] as [number, string][];
+
 function calculateBmi(height: number, weight: number) {
   const heightInMeters = height / 100;
   const bmi = weight / heightInMeters ** 2;
 
-  if (bmi < 16) return "Underweight (Severe thinness)";
-  else if (bmi < 17) return "Underweight (Moderate thinness)";
-  else if (bmi < 18.5) return "Underweight (Mild thinness)";
-  else if (bmi < 25) return "Normal (healthy weight)";
-  else if (bmi < 30) return "Overweight (Pre-obese)";
-  else if (bmi < 35) return "Obese (Class I)";
-  else if (bmi < 40) return "Obese (Class II)";
-  else return "Obese (Class III)";
+  for (let [val, txt] of BMIThresholds) {
+    if (bmi < val) return txt;
+  }
 }
 
-console.log(calculateBmi(180, 74));
+main();
+
+function printUsage() {
+  console.info(
+    "This program calculates Body Mass Index (BMI) if provided with height in centimeters and weight in kilograms."
+  );
+  console.info("Usage: calculateBmi height weight");
+}
