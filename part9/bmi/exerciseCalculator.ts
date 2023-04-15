@@ -4,7 +4,7 @@ const RATINGS = {
   3: "excellent",
 } as const;
 
-function exerciseCalculator() {
+function exerciseCalculator(): void {
   const target = +process.argv[2];
   const dailyHours = process.argv.slice(3).map((v) => +v);
 

@@ -1,4 +1,4 @@
-function bmiCalculator() {
+function bmiCalculator(): void {
   if (process.argv.length != 4) {
     printUsage();
     console.error("Height and weight should be provided.");
@@ -36,6 +36,8 @@ function calculateBmi(height: number, weight: number) {
   for (let [val, txt] of BMIThresholds) {
     if (bmi < val) return txt;
   }
+
+  return BMIThresholds[BMIThresholds.length - 1][1];
 }
 
 bmiCalculator();
