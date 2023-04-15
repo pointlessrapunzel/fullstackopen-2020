@@ -29,7 +29,7 @@ const BMIThresholds = [
   [Number.MAX_SAFE_INTEGER, "Obese (Class III)"],
 ] as [number, string][];
 
-function calculateBmi(height: number, weight: number) {
+export function calculateBmi(height: number, weight: number) {
   const heightInMeters = height / 100;
   const bmi = weight / heightInMeters ** 2;
 
@@ -40,7 +40,7 @@ function calculateBmi(height: number, weight: number) {
   return BMIThresholds[BMIThresholds.length - 1][1];
 }
 
-bmiCalculator();
+if (require.main === module) bmiCalculator();
 
 function printUsage() {
   console.info(
