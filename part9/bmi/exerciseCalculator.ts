@@ -17,7 +17,7 @@ function exerciseCalculator(): void {
   console.log(res);
 }
 
-exerciseCalculator();
+if (require.main == module) exerciseCalculator();
 
 interface Result {
   periodLength: number;
@@ -29,7 +29,10 @@ interface Result {
   average: number;
 }
 
-function calculateExercises(dailyHours: number[], target: number): Result {
+export function calculateExercises(
+  dailyHours: number[],
+  target: number
+): Result {
   const trainingHours = dailyHours.reduce((sum, cur) => sum + cur);
   const average = trainingHours / dailyHours.length;
   const trainingDays = dailyHours.reduce((sum, cur) => sum + +(cur > 0), 0);
