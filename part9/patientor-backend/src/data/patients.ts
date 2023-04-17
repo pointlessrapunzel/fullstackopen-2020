@@ -41,4 +41,6 @@ const data = [
   },
 ];
 
+export type Patient = typeof data[number];
+
 export default data;
