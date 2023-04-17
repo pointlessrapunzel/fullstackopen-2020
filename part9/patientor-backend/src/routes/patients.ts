@@ -1,14 +1,15 @@
 import express from "express";
-import patientsData from "../data/patients";
+import { addPatient, getPublicPatients } from "../services/patients";
 
 const router = express.Router();
 
 router.get("/", (_req, res) => {
-  const returnedPatients = patientsData.map(
-    ({ ssn, ...returnedData }) => returnedData
-  );
+  return res.json(getPublicPatients());
+});
 
-  return res.json(returnedPatients);
+router.post("/", (req, res) => {
+  const p = addPatient(req.body);
+  return res.json(p);
 });
 
 export default router;
