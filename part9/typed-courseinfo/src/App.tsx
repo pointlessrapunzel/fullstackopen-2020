@@ -17,21 +17,54 @@ function App() {
 
   return (
     <div>
-      <h1>{courseName}</h1>
-      <p>
-        {courseParts[0].name} {courseParts[0].exerciseCount}
-      </p>
-      <p>
-        {courseParts[1].name} {courseParts[1].exerciseCount}
-      </p>
-      <p>
-        {courseParts[2].name} {courseParts[2].exerciseCount}
-      </p>
+      <Header name={courseName} />
+      <Content parts={courseParts} />
+      <Total parts={courseParts} />
+    </div>
+  );
+}
+
+type HeaderProps = {
+  name: string;
+};
+
+function Header({ name }: HeaderProps) {
+  return <h1>{name}</h1>;
+}
+
+type CoursePart = {
+  name: string;
+  exerciseCount: number;
+};
+
+type ContentProps = {
+  parts: CoursePart[];
+};
+
+function Content({ parts }: ContentProps) {
+  return (
+    <>
+      {parts.map((p) => (
+        <p key={p.name}>
+          {p.name} {p.exerciseCount}
+        </p>
+      ))}
+    </>
+  );
+}
+
+type TotalProps = {
+  parts: CoursePart[];
+};
+
+function Total({ parts }: TotalProps) {
+  return (
+    <>
       <p>
         Number of exercises{" "}
-        {courseParts.reduce((carry, part) => carry + part.exerciseCount, 0)}
+        {parts.reduce((carry, part) => carry + part.exerciseCount, 0)}
       </p>
-    </div>
+    </>
   );
 }
 
