@@ -1,4 +1,15 @@
-const data = [
+import { ObjectValues } from "../utils/helpers";
+
+export type Patient = {
+  id: string;
+  name: string;
+  dateOfBirth: string;
+  ssn: string;
+  gender: Gender;
+  occupation: string;
+};
+
+const data: Patient[] = [
   {
     id: "d2773336-f723-11e9-8f0b-362b9e155667",
     name: "John McClane",
@@ -41,6 +52,12 @@ const data = [
   },
 ];
 
-export type Patient = typeof data[number];
+export const GENDERS = {
+  MALE: "male",
+  FEMALE: "female",
+  OTHER: "other",
+} as const;
+
+export type Gender = ObjectValues<typeof GENDERS>;
 
 export default data;
