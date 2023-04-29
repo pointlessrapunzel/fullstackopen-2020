@@ -10,6 +10,7 @@ type Diary = {
 
 function App() {
   const [diaries, setDiaries] = useState<Diary[]>([]);
+  const [formError, setFormError] = useState("");
 
   useEffect(() => {
     getAllDiaries()
@@ -20,15 +21,17 @@ function App() {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const data = new FormData(e.currentTarget);
-    postNewDiary(Object.fromEntries(data))
+    const form = e.currentTarget;
+    postNewDiary(Object.fromEntries(new FormData(form)))
       .then((savedDiary) => {
         // successfull
         setDiaries(diaries.concat(savedDiary));
+        form.reset();
       })
       .catch((err) => {
         // unsuccessfull
         // show error message
+        if (err instanceof Error) setFormError(err.message);
         console.error(err);
       });
   }
@@ -38,6 +41,7 @@ function App() {
       <h1>Ilari&apos;s flight diaries</h1>
       <section>
         <h2>add new entry</h2>
+        {formError ? <p style={{ color: "red" }}>{formError}</p> : null}
         <AddDiaryForm onSubmit={handleSubmit} />
       </section>
       <section>
