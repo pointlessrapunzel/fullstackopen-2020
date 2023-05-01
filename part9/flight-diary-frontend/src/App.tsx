@@ -1,15 +1,9 @@
 import { useEffect, useState } from "react";
 import { getAllDiaries, postNewDiary } from "./services/diaryService";
-
-type Diary = {
-  id: string;
-  date: string;
-  weather: string;
-  visibility: string;
-};
+import { NonSensitiveDiaryEntry, VISIBILITY, WEATHER } from "./types";
 
 function App() {
-  const [diaries, setDiaries] = useState<Diary[]>([]);
+  const [diaries, setDiaries] = useState<NonSensitiveDiaryEntry[]>([]);
   const [formError, setFormError] = useState("");
 
   useEffect(() => {
@@ -52,7 +46,7 @@ function App() {
   );
 }
 
-function DiariesList({ diaries }: { diaries: Diary[] }) {
+function DiariesList({ diaries }: { diaries: NonSensitiveDiaryEntry[] }) {
   return (
     <ul style={{ listStyle: "none", padding: 0 }}>
       {diaries.map((d) => (
@@ -64,7 +58,7 @@ function DiariesList({ diaries }: { diaries: Diary[] }) {
   );
 }
 
-function DiaryItem({ item }: { item: Diary }) {
+function DiaryItem({ item }: { item: NonSensitiveDiaryEntry }) {
   return (
     <>
       <h3>{item.date}</h3>
@@ -88,14 +82,30 @@ function AddDiaryForm({ onSubmit }: DiaryFormProps) {
         <label htmlFor="date">date</label>
         <input type="date" name="date" id="date" />
       </div>
-      <div>
-        <label htmlFor="visibility">visibility</label>
-        <input type="text" name="visibility" id="visibility" />
-      </div>
-      <div>
-        <label htmlFor="weather">weather</label>
-        <input type="text" name="weather" id="weather" />
-      </div>
+      <fieldset className="form-fieldset">
+        <legend>visibility</legend>
+        {Object.values(VISIBILITY).map((v) => {
+          const id = `visibility-${v}`;
+          return (
+            <div key={id}>
+              <label htmlFor={id}>{v}</label>
+              <input type="radio" name="visibility" id={id} value={v} />
+            </div>
+          );
+        })}
+      </fieldset>
+      <fieldset>
+        <legend>weather</legend>
+        {Object.values(WEATHER).map((w) => {
+          const id = `weather-${w}`;
+          return (
+            <div key={id}>
+              <label htmlFor={id}>{w}</label>
+              <input type="radio" name="weather" id={id} value={w} />
+            </div>
+          );
+        })}
+      </fieldset>
       <div>
         <label htmlFor="comment">comment</label>
         <input type="text" name="comment" id="comment" />

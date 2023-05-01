@@ -1,16 +1,11 @@
+import { NonSensitiveDiaryEntry } from "../types";
+
 const BASE_URL = "http://localhost:3000/api/diaries";
 
-type Diary = {
-  id: string;
-  date: string;
-  weather: string;
-  visibility: string;
-};
-
-export async function getAllDiaries(): Promise<Diary[]> {
+export async function getAllDiaries(): Promise<NonSensitiveDiaryEntry[]> {
   const res = await fetch(BASE_URL);
   if (res.ok) {
-    const result: Diary[] = await res.json();
+    const result: NonSensitiveDiaryEntry[] = await res.json();
     return result;
   } else {
     throw new Error("There has been an error fetching the diaries.");
@@ -19,7 +14,7 @@ export async function getAllDiaries(): Promise<Diary[]> {
 
 export async function postNewDiary(newDiary: {
   [k: string]: FormDataEntryValue;
-}): Promise<Diary> {
+}): Promise<NonSensitiveDiaryEntry> {
   const res = await fetch(BASE_URL, {
     method: "POST",
     headers: {
